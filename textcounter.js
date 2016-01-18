@@ -47,6 +47,13 @@
           textCount = $text.trim().replace(/\s+/gi, ' ').split(' ').length;
         }
         else {  // character count
+          if(base.options.twoCharCarriageReturn) {
+            // handle newlines as 2 character \r\n like browser maxlength does
+            newLines = $text.match(/(\r\n|\n|\r)/g);
+            if (newLines != null) {
+              newlineAddition = newLines.length;
+            }
+          }
           if (base.options.countSpaces) { // if need to count spaces
             textCount = $text.replace(/[^\S\n|\r|\r\n]/g, ' ').length;
           }
@@ -62,6 +69,10 @@
             } else {
               textCount = $text.length + extended.length;
             }
+          }
+          
+          if(base.options.twoCharCarriageReturn) {
+            textCount += newlineAddition;
           }
         }
       }
@@ -215,6 +226,7 @@
     'countDown'                 : false,                    // if the counter should deduct from maximum characters/words rather than counting up
     'countDownText'             : "Remaining: ",            // count down text
     'countExtendedCharacters'   : false,                    // count extended UTF-8 characters as 2 bytes (such as Chinese characters)
+    'twoCharCarriageReturn'    : false,                    // count carriage returns as 2 characters (\r\n) to align with web browsers.
 
     // Callback API
     maxcount                    : function(el){},           // Callback: function(element) - Fires when the counter hits the maximum word/character count
